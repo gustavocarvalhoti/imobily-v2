@@ -121,13 +121,14 @@ export default function CreateRealState() {
         <div id="page-create-orphanage">
             <Sidebar/>
             <main>
-                <form className="create-orphanage-form" onSubmit={handleSubmit}>
+                <form className="create-orphanage-form" onSubmit={handleSubmit} autoComplete="off">
                     <fieldset>
                         <legend>Cadastro de Imobiliária</legend>
                         <div className="input-block">
-                            <label htmlFor="name">Nome</label>
+                            <label htmlFor="realStateName">Nome da Imobiliária</label>
                             <input
-                                id="name"
+                                id="realStateName"
+                                name="realStateName"
                                 type="text"
                                 value={name}
                                 onChange={event => setName(event.target.value)}

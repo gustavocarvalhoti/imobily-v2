@@ -14,3 +14,7 @@ body, input, button, textarea {
     /* Default Nunito or use sans-serif */
     font: 600 18px Nunito, sans-serif;
 }
+
+a {
+    text-decoration: none;
+}

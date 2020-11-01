@@ -1,10 +1,10 @@
 import {MigrationInterface, QueryRunner, Table} from "typeorm";
 
-export class createImages1602642359533 implements MigrationInterface {
+export class createPropertyPrices1602638377119 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.createTable(new Table({
-            name: 'images',
+            name: 'property_prices',
             columns: [
                 {
                     name: 'id',
@@ -15,41 +15,39 @@ export class createImages1602642359533 implements MigrationInterface {
                     generationStrategy: 'increment'
                 },
                 {
-                    name: 'path',
+                    name: 'real_state',
+                    type: 'integer'
+                },
+                {
+                    name: 'link',
                     type: 'varchar'
                 },
                 {
-                    name: 'orphanage_id',
-                    type: 'integer',
-                    isNullable: true
+                    name: 'price',
+                    type: 'decimal',
+                    scale: 10,
+                    precision: 2
                 },
                 {
-                    name: 'real_state_id',
-                    type: 'integer'
+                    name: 'property_price_id',
+                    type: 'integer',
+                    isNullable: true
                 },
             ],
             foreignKeys: [
                 {
-                    name: 'ImageOrphanage',
-                    columnNames: ['orphanage_id'],
-                    referencedTableName: 'orphanages',
+                    name: 'PropertyPropertyPrice',
+                    columnNames: ['property_price_id'],
+                    referencedTableName: 'properties',
                     referencedColumnNames: ['id'],
                     onUpdate: 'CASCADE',
                     onDelete: 'CASCADE',
                 },
-                {
-                    name: 'ImageRealState',
-                    columnNames: ['real_state_id'],
-                    referencedTableName: 'real_states',
-                    referencedColumnNames: ['id'],
-                    onUpdate: 'CASCADE',
-                    onDelete: 'CASCADE',
-                }
             ],
         }))
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.dropTable('images');
+        await queryRunner.dropTable('property_prices');
     }
 }

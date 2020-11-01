@@ -1,5 +1,6 @@
-import {Column, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn} from 'typeorm';
+import {Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn} from 'typeorm';
 import Image from "./Image";
+import Properties from "./Property";
 
 @Entity('real_states')
 export default class RealState {
@@ -47,4 +48,8 @@ export default class RealState {
     })
     @JoinColumn({name: 'real_state_id'})
     images: Image[];
+
+    @ManyToOne(() => Properties, Properties => Properties.images)
+    @JoinColumn({name: 'property_id'})
+    properties: Properties;
 }

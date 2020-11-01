@@ -1,6 +1,6 @@
 import {MigrationInterface, QueryRunner, Table} from "typeorm";
 
-export class createRealState1602642359532 implements MigrationInterface {
+export class createRealState1602638377117 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.createTable(new Table({
@@ -65,6 +65,11 @@ export class createRealState1602642359532 implements MigrationInterface {
                     type: 'decimal',
                     scale: 10,
                     precision: 2
+                },
+                {
+                    name: 'property_id',
+                    type: 'integer',
+                    isNullable: true
                 },
             ],
         }))

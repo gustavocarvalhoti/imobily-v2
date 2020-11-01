@@ -74,6 +74,17 @@
     transition: background-color 0.2s;
 }
 
+#page-landing .enter-app {
+    width: 190px;
+    height: 80px;
+    background: #ffd666;
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+}
+
 #page-landing .content-wrapper .enter-app:hover {
     background: #96feff;
 }

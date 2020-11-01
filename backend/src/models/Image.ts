@@ -1,6 +1,7 @@
 import {Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn} from 'typeorm';
 import Orphanage from './Orphanage';
 import RealState from './RealState';
+import Property from './Property';
 
 @Entity('images')
 export default class Image {
@@ -17,4 +18,8 @@ export default class Image {
     @ManyToOne(() => RealState, realState => realState.images)
     @JoinColumn({name: 'real_state_id'})
     real_state: RealState;
+
+    @ManyToOne(() => Property, property => property.images)
+    @JoinColumn({name: 'property_id'})
+    property: Property;
 }

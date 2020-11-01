@@ -4,6 +4,7 @@ import Landing from "./pages/Landing";
 import OrphanagesMap from "./pages/OrphanagesMap";
 import CreateOrphanage from "./pages/CreateOrphanage";
 import CreateRealState from "./pages/CreateRealState";
+import CreateProperty from "./pages/CreateProperty";
 import Orphanage from "./pages/Orphanage";
 
 function Routes() {
@@ -15,6 +16,7 @@ function Routes() {
                 <Route path="/orphanages/create" component={CreateOrphanage}/>
                 <Route path="/orphanages/:id" component={Orphanage}/>
                 <Route path="/real-state/create" component={CreateRealState}/>
+                <Route path="/property/create" component={CreateProperty}/>
             </Switch>
         </BrowserRouter>
     );

@@ -2,30 +2,30 @@ import React, {ChangeEvent, FormEvent, useEffect, useState} from "react";
 import {Map, Marker, TileLayer} from 'react-leaflet';
 import {LeafletMouseEvent} from 'leaflet';
 import {FiPlus} from "react-icons/fi";
-import '../styles/pages/create-real-state.css';
+import '../styles/pages/create-property.css';
 import Sidebar from "../components/Sidebar";
 import mapIcon from "../utils/mapIcon";
 import api from "../services/api";
 import {useHistory} from "react-router-dom";
 
-export default function CreateRealState() {
+export default function CreateOrphanage() {
 
     const history = useHistory();
 
     const [position, setPosition] = useState({latitude: 0, longitude: 0});
-    const [currentPosition, setCurrentPosition] = useState({latitude: 0, longitude: 0});
     const [name, setName] = useState('');
-    const [cnpj, setCNPJ] = useState('');
-    const [creci, setCreci] = useState('');
-    const [email, setEmail] = useState('');
-    const [url, setUrl] = useState('');
-    const [cep, setCEP] = useState('');
+    const [about, setAbout] = useState('');
+    const [instructions, setInstructions] = useState('');
+    const [opening_hours, setOpeningHours] = useState('');
+    const [open_on_weekends, setOpenOnWeekends] = useState(true);
+    const [images, setImages] = useState<File[]>([]);
+    const [previewImages, setPreviewImages] = useState<string[]>([]);
     const [address, setAddress] = useState('');
     const [number, setNumber] = useState('');
     const [city, setCity] = useState('');
     const [state, setState] = useState('');
-    const [images, setImages] = useState<File[]>([]);
-    const [previewImages, setPreviewImages] = useState<string[]>([]);
+    const [cep, setCEP] = useState('');
+    const [currentPosition, setCurrentPosition] = useState({latitude: 0, longitude: 0});
 
     function handleMapClick(event: LeafletMouseEvent) {
         const {lat, lng} = event.latlng;
@@ -44,31 +44,40 @@ export default function CreateRealState() {
         });
     }, []);
 
+
+    function cepMask(valor: string) {
+        return valor
+            .replace(/[\s]/, "")
+            .replace(/[(a-zA-Z)+(\!\@\#\$\%\^\&\*\(\))+]/, "")
+            .replace(/T/g, "")
+            .replace(/(\d{5})(\d{2})/, "\$1-\$2");
+    }
+
+    function handleChangeCEP(e: ChangeEvent<HTMLInputElement>) {
+        setCEP(cepMask(e.target.value))
+    }
+
     async function handleSubmit(event: FormEvent) {
-        console.log(currentPosition);
         event.preventDefault();
         const {latitude, longitude} = position;
 
+        /* Equal the Multipart of the Insomnia */
         const data = new FormData();
         data.append('name', name);
-        data.append('cnpj', cnpj);
-        data.append('creci', creci);
-        data.append('email', email);
-        data.append('url', url);
-        data.append('cep', cep);
-        data.append('address', address);
-        data.append('number', number);
-        data.append('city', city);
-        data.append('state', state);
+        data.append('about', about);
         data.append('latitude', String(latitude));
         data.append('longitude', String(longitude));
+        data.append('instructions', instructions);
+        data.append('open_on_weekends', String(open_on_weekends));
+        data.append('opening_hours', opening_hours);
         images.forEach(image => {
             data.append('images', image);
         })
 
-        await api.post('real-state', data);
+        await api.post('orphanages', data);
 
-        alert('Imobiliária cadastrada com sucesso!');
+        alert('Cadastro realizado com sucesso!');
+        history.push('/app');
     }
 
     function handleSelectImages(event: ChangeEvent<HTMLInputElement>) {
@@ -84,78 +93,72 @@ export default function CreateRealState() {
         setPreviewImages(selectedImagesPreview);
     }
 
-    function cpfMask(value: string) {
-        return value
-            .replace(/\D/g, '')
-            .replace(/(\d{3})(\d)/, '$1.$2')
-            .replace(/(\d{3})(\d)/, '$1.$2')
-            .replace(/(\d{3})(\d{1,2})/, '$1-$2')
-            .replace(/(-\d{2})\d+?$/, '$1')
-    }
-
-    function cnpjMask(valor: string) {
-        return valor
-            .replace(/[\s]/, "")
-            .replace(/[(a-zA-Z)+(\!\@\#\$\%\^\&\*\(\))+]/, "")
-            .replace(/T/g, "")
-            .replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/g, "\$1.\$2.\$3\/\$4\-\$5");
-    }
-
-    function cepMask(valor: string) {
-        return valor
-            .replace(/[\s]/, "")
-            .replace(/[(a-zA-Z)+(\!\@\#\$\%\^\&\*\(\))+]/, "")
-            .replace(/T/g, "")
-            .replace(/(\d{5})(\d{2})/, "\$1-\$2");
-    }
-
-    function handleChangeCNPJ(e: ChangeEvent<HTMLInputElement>) {
-        setCNPJ(cnpjMask(e.target.value))
-    }
-
-    function handleChangeCEP(e: ChangeEvent<HTMLInputElement>) {
-        setCEP(cepMask(e.target.value))
-    }
-
     return (
         <div id="page-create-orphanage">
             <Sidebar/>
             <main>
                 <form className="create-orphanage-form" onSubmit={handleSubmit} autoComplete="off">
                     <fieldset>
-                        <legend>Cadastro de Imobiliária</legend>
+                        <legend>Cadastro de Imóvel</legend>
                         <div className="input-block">
-                            <label htmlFor="realStateName">Nome da Imobiliária</label>
+                            <div className="button-select">
+                                <button
+                                    type="button"
+                                    className={open_on_weekends ? 'active' : ''}
+                                    onClick={() => setOpenOnWeekends(true)}
+                                >
+                                    Alugar
+                                </button>
+                                <button
+                                    type="button"
+                                    className={!open_on_weekends ? 'active' : ''}
+                                    onClick={() => setOpenOnWeekends(false)}
+                                >
+                                    Vender
+                                </button>
+                            </div>
+                        </div>
+                        <div className="input-block">
+                            <label htmlFor="name">Categoria</label>
                             <input
-                                id="realStateName"
-                                name="realStateName"
-                                type="text"
+                                id="name"
                                 value={name}
                                 onChange={event => setName(event.target.value)}
-                                maxLength={150}
                             />
                         </div>
                         <div className="input-block">
-                            <label htmlFor="cnpj">CNPJ</label>
+                            <label htmlFor="about">Descrição <span>Máximo de 300 caracteres</span></label>
+                            <textarea
+                                id="about"
+                                maxLength={300}
+                                value={about}
+                                onChange={event => setAbout(event.target.value)}
+                            />
+                        </div>
+                        <div className="input-block">
+                            <label htmlFor="name">Valor</label>
                             <input
-                                id="cnpj"
-                                type="text"
-                                value={cnpj}
-                                onChange={event => handleChangeCNPJ(event)}
-                                maxLength={18}
+                                id="price"
+                                value={name}
+                                onChange={event => setName(event.target.value)}
                             />
                         </div>
                         <div className="input-block">
-                            <label htmlFor="creci">Creci</label>
-                            <input id="creci" value={creci} onChange={event => setCreci(event.target.value)}/>
-                        </div>
-                        <div className="input-block">
-                            <label htmlFor="email">Email</label>
-                            <input id="email" value={email} onChange={event => setEmail(event.target.value)}/>
-                        </div>
-                        <div className="input-block">
-                            <label htmlFor="site">Site</label>
-                            <input id="site" value={url} onChange={event => setUrl(event.target.value)}/>
+                            <label htmlFor="images">Fotos</label>
+                            <div className="images-container">
+                                {previewImages.map((image, index) => {
+                                    return <img key={index} src={image} alt={name}/>
+                                })}
+                                <label htmlFor="image[]" className="new-image">
+                                    <FiPlus size={24} color="#15b6d6"/>
+                                </label>
+                            </div>
+                            <input
+                                id="image[]"
+                                type="file"
+                                multiple
+                                onChange={handleSelectImages}
+                            />
                         </div>
                     </fieldset>
                     <fieldset>
@@ -210,26 +213,26 @@ export default function CreateRealState() {
                         </Map>
                     </fieldset>
                     <fieldset>
-                        <legend>Fotos da Imobiliária</legend>
-                        <div className="input-block">
-                            <label htmlFor="images">Fotos</label>
-                            <div className="images-container">
-                                {previewImages.map((image, index) => {
-                                    return <img key={index} src={image} alt={name}/>
-                                })}
-                                <label htmlFor="image[]" className="new-image">
-                                    <FiPlus size={24} color="#15b6d6"/>
-                                </label>
+                        <legend>Imobiliárias</legend>
+                        <div className="input-block input-block-address">
+                            <div>
+                                <label htmlFor="address">Imobiliária</label>
+                                <input id="address" value={address} onChange={event => setAddress(event.target.value)}/>
                             </div>
+                            <div>
+                                <label htmlFor="number">Valor</label>
+                                <input id="number" value={number} onChange={event => setNumber(event.target.value)}/>
+                            </div>
+                        </div>
+                        <div className="input-block">
+                            <label htmlFor="name">Link</label>
                             <input
-                                id="image[]"
-                                type="file"
-                                multiple
-                                onChange={handleSelectImages}
+                                id="price"
+                                value={name}
+                                onChange={event => setName(event.target.value)}
                             />
                         </div>
                     </fieldset>
-                    <span className="warning">* Preencha todos os campos acima para continuar.</span>
                     <button className="confirm-button" type="submit">
                         Confirmar
                     </button>
